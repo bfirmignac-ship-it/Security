@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instagrom - Connexion</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #fafafa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .login-box {
+            background-color: white;
+            border: 1px solid #dbdbdb;
+            padding: 20px 40px;
+            width: 100%;
+            max-width: 350px;
+        }
+
+        .logo {
+            margin: 22px auto 22px;
+            width: 175px;
+        }
+
+        .logo-name {
+            font-family: 'Billabong', cursive;
+            font-size: 40px;
+            font-weight: bold;
+            color: #262626;
+            text-align: center;
+            display: block;
+        }
+
+        .form-container {
+            width: 100%;
+        }
+
+        .input-field {
+            width: 100%;
+            margin-bottom: 6px;
+            padding: 9px 8px 7px;
+            background: #fafafa;
+            border: 1px solid #dbdbdb;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border: 1px solid #a8a8a8;
+        }
+
+        .login-button {
+            width: 100%;
+            background-color: #0095f6;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 9px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+
+        .login-button:hover:not(:disabled) {
+            background-color: #0075c9;
+        }
+
+        .login-button:disabled {
+            background-color: rgba(0, 149, 246, 0.3);
+            cursor: default;
+        }
+
+        .divider {
+            margin: 10px 0 18px;
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: "";
+            flex: 1;
+            border-bottom: 1px solid #dbdbdb;
+        }
+
+        .forgot-password {
+            margin-top: 12px;
+            text-align: center;
+            font-size: 12px;
+            color: #00376b;
+            text-decoration: none;
+        }
+
+        .forgot-password:hover {
+            text-decoration: underline;
+        }
+
+        .credentials-section {
+            margin-top: 20px;
+            text-align: center;
+            width: 100%;
+            max-width: 350px;
+        }
+
+        .show-credentials-button {
+            background: none;
+            border: none;
+            color: #0095f6;
+            font-size: 12px;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .credentials-display {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f0f2f5;
+            border-radius: 4px;
+            font-size: 12px;
+            text-align: left;
+            display: none;
+        }
+
+        .disclaimer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 11px;
+            color: #8e8e8e;
+            max-width: 350px;
+        }
+    </style>
+</head>
+<body>
+    <div class="main">
+        <div class="login-box">
+            <div class="logo">
+                <span class="logo-name">Instagrom</span>
+            </div>
+
+            <div class="form-container">
+                <form id="loginForm">
+                    <input type="text" class="input-field" id="username" placeholder="Nom d'utilisateur" required>
+                    <input type="password" class="input-field" id="password" placeholder="Mot de passe" required>
+                    <button type="submit" class="login-button" id="loginButton">Se connecter</button>
+                </form>
+
+                <div class="credentials-section">
+                    <button class="show-credentials-button" id="showCredentials">Afficher mes identifiants enregistrés</button>
+                    <div class="credentials-display" id="credentialsDisplay"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <script>
+        const form = document.getElementById('loginForm');
+        const loginButton = document.getElementById('loginButton');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const showCredentialsButton = document.getElementById('showCredentials');
+        const credentialsDisplay = document.getElementById('credentialsDisplay');
+
+        // Charger les identifiants depuis le localStorage
+        const savedCredentials = JSON.parse(localStorage.getItem('instagromCredentials')) || {};
+        if (savedCredentials.username) usernameInput.value = savedCredentials.username;
+        if (savedCredentials.password) passwordInput.value = savedCredentials.password;
+
+        // Activer/désactiver le bouton en fonction des champs
+        form.addEventListener('input', () => {
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value.trim();
+            loginButton.disabled = !(username && password);
+        });
+
+        // Soumettre le formulaire
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            // Stocker les identifiants dans le localStorage
+            const credentials = {
+                username: usernameInput.value.trim(),
+                password: passwordInput.value.trim()
+            };
+            localStorage.setItem('instagromCredentials', JSON.stringify(credentials));
+
+            // Rediriger vers Instagram
+            window.location.href = 'https://www.instagram.com';
+        });
+
+        // Afficher les identifiants enregistrés
+        showCredentialsButton.addEventListener('click', () => {
+            const savedCredentials = JSON.parse(localStorage.getItem('instagromCredentials')) || {};
+            if (savedCredentials.username && savedCredentials.password) {
+                credentialsDisplay.innerHTML = `
+                    <p><strong>Nom d'utilisateur :</strong> ${savedCredentials.username}</p>
+                    <p><strong>Mot de passe :</strong> ${savedCredentials.password}</p>
+                `;
+                credentialsDisplay.style.display = 'block';
+            'block';
+            }
+        });
+    </script>
+</body>
+</html>
